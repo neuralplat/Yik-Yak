@@ -14,31 +14,32 @@ export default function ModeratorPage() {
     async function loadReports() {
         const { data } = await supabase
             .from('reports')
-            .select('*, posts(content)')
-            .eq('status', 'pending')
+            .select('*, posts(content), comments(content)')
+            .in('status', ['pending'])
 
         if (data) {
-            // Flatten structure for easy display
-            setReports(data.map(r => ({
+            setReports(data.map((r: any) => ({
                 id: r.id,
-                content: r.posts?.content || '[Deleted Post]',
+                content: r.posts?.content || r.comments?.content || '[Content Deleted]',
                 reason: r.reason,
-                post_id: r.post_id
+                post_id: r.post_id,
+                comment_id: r.comment_id,
+                type: r.comment_id ? 'comment' : 'post'
             })))
         }
     }
 
-    const handleAction = async (reportId: string, action: 'approve' | 'ban', postId?: string) => {
-        // Optimistic UI update
+    const handleAction = async (reportId: string, action: 'approve' | 'ban', item?: any) => {
         setReports(reports.filter(r => r.id !== reportId))
 
-        if (action === 'ban' && postId) {
-            // Delete the post
-            await supabase.from('posts').delete().eq('id', postId)
-            // Update report status
+        if (action === 'ban' && item) {
+            if (item.type === 'post') {
+                await supabase.from('posts').delete().eq('id', item.post_id)
+            } else {
+                await supabase.from('comments').delete().eq('id', item.comment_id)
+            }
             await supabase.from('reports').update({ status: 'action_taken' } as any).eq('id', reportId)
         } else {
-            // Dismiss report
             await supabase.from('reports').update({ status: 'dismissed' } as any).eq('id', reportId)
         }
     }
@@ -63,7 +64,7 @@ export default function ModeratorPage() {
 
                         <div className="flex gap-4">
                             <button
-                                onClick={() => handleAction(report.id, 'ban', report.post_id)}
+                                onClick={() => handleAction(report.id, 'ban', report)}
                                 className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-bold flex justify-center items-center gap-2"
                             >
                                 <X size={18} /> Remove Post

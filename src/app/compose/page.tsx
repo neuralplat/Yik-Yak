@@ -1,12 +1,13 @@
 "use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/components/features/AuthProvider'
 import { useLocation } from '@/components/features/LocationProvider'
 import { moderateContent } from '@/lib/moderation'
-import { Clock, Send, Ghost } from 'lucide-react'
+import { generateYakkerId } from '@/lib/name-generator'
+import { ArrowLeft, Clock, MapPin, Send, Ghost } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 export default function ComposePage() {
@@ -15,9 +16,12 @@ export default function ComposePage() {
     const [duration, setDuration] = useState('24h') // 12h, 24h, 48h, 1w
     const [loading, setLoading] = useState(false)
 
+    const router = useRouter()
+    const searchParams = useSearchParams()
+    const communityName = searchParams.get('name')
+    const communityId = searchParams.get('community_id')
     const { user } = useAuth()
     const { coords } = useLocation()
-    const router = useRouter()
 
     const handlePost = async () => {
         if (!content.trim()) return
@@ -44,6 +48,7 @@ export default function ComposePage() {
         let expiresAt = null
         if (isGhost) {
             const date = new Date()
+            if (duration === '5m') date.setMinutes(date.getMinutes() + 5)
             if (duration === '12h') date.setHours(date.getHours() + 12)
             if (duration === '24h') date.setHours(date.getHours() + 24)
             if (duration === '48h') date.setHours(date.getHours() + 48)
@@ -51,12 +56,30 @@ export default function ComposePage() {
             expiresAt = date.toISOString()
         }
 
+        // Check/Create Profile to fix Foreign Key Error
+        const { data: profile } = await supabase.from('profiles').select('id').eq('id', user.id).single()
+
+        if (!profile) {
+            const newId = generateYakkerId()
+            const { error: createError } = await supabase.from('profiles').insert({
+                id: user.id,
+                yakker_id: newId
+            } as any)
+
+            if (createError) {
+                alert("Failed to create yakker profile: " + createError.message)
+                setLoading(false)
+                return
+            }
+        }
+
         const { error } = await supabase.from('posts').insert({
             user_id: user.id,
-            content: content,
-            location: `POINT(${coords.longitude} ${coords.latitude})`, // PostGIS format
-            is_ghost: isGhost,
-            expires_at: expiresAt
+            content,
+            location: `POINT(${coords.longitude} ${coords.latitude})`,
+            expires_at: expiresAt,
+            is_ghost: !!expiresAt,
+            community_id: communityId || null // Add this line
         } as any)
 
         if (error) {
@@ -67,7 +90,7 @@ export default function ComposePage() {
         setLoading(false)
     }
 
-    const durationOptions = ['12h', '24h', '48h', '1w']
+    const durationOptions = ['5m', '12h', '24h', '48h', '1w']
 
     return (
         <div className="max-w-2xl mx-auto min-h-screen bg-white flex flex-col md:border-x md:shadow-sm">
@@ -84,13 +107,25 @@ export default function ComposePage() {
             </header>
 
             <div className="flex-1 p-6">
-                <textarea
-                    value={content}
-                    onChange={e => setContent(e.target.value)}
-                    placeholder="What's happening in the herd?"
-                    className="w-full h-64 text-xl resize-none outline-none placeholder:text-gray-300"
-                    maxLength={2000}
-                />
+                <div className="relative">
+                    <textarea
+                        value={content}
+                        onChange={e => setContent(e.target.value)}
+                        placeholder={communityName ? `What's happening in ${communityName}?` : "What's on your mind?"}
+                        className="w-full h-40 bg-transparent text-xl placeholder-gray-400 outline-none resize-none"
+                        maxLength={300}
+                    />
+                    <div className="absolute bottom-2 right-0 text-xs font-bold text-gray-400 bg-white/50 px-2 rounded-full backdrop-blur-sm">
+                        {content.length}/300
+                    </div>
+                </div>
+
+                {communityName && (
+                    <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full text-xs font-bold">
+                        <MapPin size={12} />
+                        Posting to {communityName}
+                    </div>
+                )}
 
                 <div className="mt-4 space-y-4">
                     <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl cursor-pointer" onClick={() => setIsGhost(!isGhost)}>

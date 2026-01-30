@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { BarChart, Plus, DollarSign, Target } from 'lucide-react'
+import { BarChart3, Users, IndianRupee, Plus, Megaphone, Target } from 'lucide-react'
 import { supabase } from '@/lib/supabase/client'
 
 export default function BusinessDashboard() {
@@ -10,7 +10,7 @@ export default function BusinessDashboard() {
 
     const [stats, setStats] = useState([
         { label: 'Active Ads', value: '-', icon: Target },
-        { label: 'Total Budget', value: '-', icon: DollarSign },
+        { label: 'Total Budget', value: '-', icon: IndianRupee },
     ])
 
     useEffect(() => {
@@ -19,7 +19,7 @@ export default function BusinessDashboard() {
             if (ads) {
                 setStats([
                     { label: 'Active Ads', value: ads.length.toString(), icon: Target },
-                    { label: 'Total Budget', value: '$' + (ads.length * 499).toString(), icon: DollarSign },
+                    { label: 'Total Budget', value: '₹' + (ads.length * 499).toString(), icon: IndianRupee },
                 ])
             }
         }
@@ -56,7 +56,7 @@ export default function BusinessDashboard() {
                 <div className="bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl p-6 text-white shadow-lg flex justify-between items-center">
                     <div>
                         <h2 className="text-lg font-bold">Grow your local reach</h2>
-                        <p className="text-cyan-100 text-sm">Target customers within 5 miles starting at $499/mo</p>
+                        <p className="text-cyan-100 text-sm">Target customers within 5 km starting at ₹499/mo</p>
                     </div>
                     <button
                         onClick={() => router.push('/business/create-ad')}
