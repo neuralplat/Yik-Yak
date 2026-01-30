@@ -13,15 +13,31 @@ export default function FeedPage() {
   const { user } = useAuth()
   const router = useRouter()
   const [posts, setPosts] = useState<any[]>([])
+  const [ad, setAd] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (coords) {
       fetchPosts()
+      fetchRandomAd()
     } else if (!locLoading) {
       setLoading(false) // Location failed or denied
     }
   }, [coords, locLoading])
+
+  async function fetchRandomAd() {
+    // Fetch random active ad
+    const { data } = await supabase
+      .from('ads')
+      .select('*')
+      .gt('expires_at', new Date().toISOString())
+      .limit(10) // fetch a few pool
+
+    if (data && data.length > 0) {
+      const random = data[Math.floor(Math.random() * data.length)]
+      setAd(random)
+    }
+  }
 
   async function fetchPosts() {
     setLoading(true)
@@ -140,15 +156,19 @@ export default function FeedPage() {
       </header>
 
       <div className="space-y-3">
-        {/* Placeholder Ad */}
-        <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 p-4 rounded-xl shadow-sm">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Sponsored</span>
-            <span className="text-[10px] text-gray-400">Local Promo</span>
+        {/* Sponsored Area - Fetch random active ad */}
+        {ad && (
+          <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 p-4 rounded-xl shadow-sm">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Sponsored</span>
+              <span className="text-[10px] text-gray-400">Local Promo</span>
+            </div>
+            {ad.title && <h3 className="font-bold text-gray-900 mb-1 leading-tight">{ad.title}</h3>}
+            <p className="font-medium text-gray-800 text-sm">{ad.content}</p>
+            <div className="text-[10px] text-gray-400 mt-2 text-right">Expires in {formatDistanceToNow(new Date(ad.expires_at))}</div>
           </div>
-          <p className="font-medium text-gray-800">Joe's Pizza - 50% off for all Yakkers tonight! 🍕</p>
-          <button className="mt-3 w-full py-2 bg-orange-400 text-white rounded-lg text-sm font-bold shadow-sm">Get Deal</button>
-        </div>
+        )}
+
 
         {posts.length === 0 ? (
           <div className="text-center py-20 text-gray-400">

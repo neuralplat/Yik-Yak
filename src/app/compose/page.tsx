@@ -96,7 +96,7 @@ export default function ComposePage() {
         <div className="max-w-2xl mx-auto min-h-screen bg-white flex flex-col md:border-x md:shadow-sm">
             <header className="flex justify-between items-center p-4 border-b">
                 <button onClick={() => router.back()} className="text-gray-500 hover:bg-gray-100 p-2 rounded-full">Cancel</button>
-                <h1 className="font-bold text-lg">New Yak</h1>
+                <h1 className="font-black text-xl text-cyan-500 uppercase tracking-tighter">New Yak</h1>
                 <button
                     onClick={handlePost}
                     disabled={!content.trim() || loading}
@@ -134,8 +134,8 @@ export default function ComposePage() {
                                 <Ghost size={20} />
                             </div>
                             <div className="flex flex-col">
-                                <span className="font-medium">Ghost Mode</span>
-                                <span className="text-xs text-gray-500">Disappears after a set time</span>
+                                <span className="font-medium text-black">Ghost Mode</span>
+                                <span className="text-xs text-black font-bold">Disappears after a set time</span>
                             </div>
                         </div>
                         <div className={cn("w-12 h-6 rounded-full relative transition-colors", isGhost ? "bg-purple-500" : "bg-gray-300")}>

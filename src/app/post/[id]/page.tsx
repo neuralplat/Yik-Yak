@@ -252,7 +252,7 @@ export default function PostPage() {
                         value={newComment}
                         onChange={e => setNewComment(e.target.value)}
                         placeholder={replyingTo ? "Write a reply..." : "Yak back..."}
-                        className="flex-1 bg-gray-100 rounded-2xl px-4 py-3 outline-none focus:ring-2 ring-cyan-500 resize-none min-h-[50px] max-h-[120px]"
+                        className="flex-1 bg-gray-100 rounded-2xl px-4 py-3 outline-none focus:ring-2 ring-cyan-500 resize-none min-h-[50px] max-h-[120px] text-black placeholder-gray-800"
                         rows={1}
                         onKeyDown={e => {
                             if (e.key === 'Enter' && !e.shiftKey) {
@@ -264,7 +264,7 @@ export default function PostPage() {
                     <button
                         onClick={handleComment}
                         disabled={!newComment.trim()}
-                        className="bg-cyan-500 text-white p-3 rounded-full hover:bg-cyan-600 disabled:opacity-50 shadow-md mb-0.5"
+                        className="bg-blue-600 text-white p-3 rounded-full hover:bg-blue-700 disabled:opacity-50 shadow-md mb-0.5"
                     >
                         <Send size={20} />
                     </button>

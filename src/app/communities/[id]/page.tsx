@@ -40,7 +40,8 @@ export default function CommunityFeedPage() {
     }
 
     async function checkMembership() {
-        const { data } = await supabase.from('community_members').select('*').eq('community_id', communityId).eq('user_id', user?.id).single()
+        if (!user) return
+        const { data } = await supabase.from('community_members').select('*').eq('community_id', communityId).eq('user_id', user.id).single()
         setIsMember(!!data)
     }
 

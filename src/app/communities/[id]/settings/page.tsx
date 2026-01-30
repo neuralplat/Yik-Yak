@@ -41,7 +41,7 @@ export default function CommunitySettingsPage() {
     }
 
     const handleSave = async () => {
-        const { error } = await supabase.from('communities').update({
+        const { error } = await supabase.from('communities' as any).update({
             name,
             description,
             radius_meters: radius
@@ -103,12 +103,34 @@ export default function CommunitySettingsPage() {
                     </div>
                 </div>
 
-                <div className="pt-4 border-t">
+                <div className="pt-4 border-t space-y-3">
                     <button
                         onClick={handleSave}
                         className="w-full bg-cyan-500 text-white p-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-cyan-600"
                     >
                         <Save size={20} /> Save Changes
+                    </button>
+
+                    <button
+                        onClick={async () => {
+                            if (!confirm("Are you sure? This will delete the herd and all its posts forever.")) return
+
+                            // Check for delete policy by counting deleted rows
+                            const { error, count } = await supabase.from('communities').delete({ count: 'exact' }).eq('id', communityId)
+
+                            if (error) {
+                                alert(error.message)
+                            } else if (count === 0) {
+                                alert("Failed to delete. Access denied (Database Policy likely missing).")
+                            } else {
+                                alert("Herd deleted.")
+                                router.refresh() // Refresh server caches
+                                window.location.href = '/communities' // Hard navigation to force reload
+                            }
+                        }}
+                        className="w-full bg-red-50 text-red-500 p-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-red-100"
+                    >
+                        Delete Herd
                     </button>
                 </div>
             </div>

@@ -82,7 +82,7 @@ export default function CommunitiesPage() {
     return (
         <div className="min-h-screen bg-white pb-20">
             <header className="p-4 border-b sticky top-0 bg-white z-10 flex justify-between items-center">
-                <h1 className="text-xl font-bold">Local Herds</h1>
+                <h1 className="text-2xl font-black text-black">Local Herds</h1>
                 <button
                     onClick={() => router.push('/communities/create')}
                     className="bg-cyan-500 text-white p-2 rounded-full shadow-sm hover:bg-cyan-600 transition-colors"
@@ -111,7 +111,7 @@ export default function CommunitiesPage() {
                                 <Map size={24} />
                             </div>
                             <div className="flex-1 min-w-0">
-                                <h3 className="font-bold text-lg truncate">{comm.name}</h3>
+                                <h3 className="font-black text-lg truncate text-black">{comm.name}</h3>
                                 {comm.description && <p className="text-sm text-gray-500 truncate">{comm.description}</p>}
                                 <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
                                     <span className="flex items-center gap-1"><Users size={12} /> {comm.membersCount} Members</span>

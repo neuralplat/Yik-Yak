@@ -45,7 +45,7 @@ export default function MePage() {
     return (
         <div className="p-4 space-y-6 pb-20">
             <header className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">My Yak Profile</h1>
+                <h1 className="text-2xl font-bold text-black">My Yak Profile</h1>
                 <button
                     onClick={() => signOut()}
                     className="text-sm text-red-500 font-medium hover:underline"
@@ -71,7 +71,7 @@ export default function MePage() {
             </div>
 
             <div className="space-y-4">
-                <h2 className="text-lg font-semibold">Menu</h2>
+                <h2 className="text-lg font-semibold text-black">Menu</h2>
                 <div className="space-y-2">
                     <button
                         onClick={() => window.location.href = '/business'}
@@ -87,7 +87,7 @@ export default function MePage() {
                     </button>
                 </div>
 
-                <h2 className="text-lg font-semibold">Settings</h2>
+                <h2 className="text-lg font-semibold text-black">Settings</h2>
                 <div className="space-y-2">
                     <div className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
                         <span>Notifications</span>
