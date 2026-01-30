@@ -100,15 +100,23 @@ export default function FeedPage() {
       return p
     }))
 
-    if (newVal === 0) {
-      await supabase.from('votes').delete().eq('post_id', postId).eq('user_id', user.id)
-    } else {
-      const { error } = await supabase.from('votes').upsert({
+    // Database Sync
+    // 1. Always delete any existing vote for this post/user combo to clear state
+    await supabase.from('votes').delete().eq('post_id', postId).eq('user_id', user.id)
+
+    // 2. If it's not a removal (0), insert the new vote
+    if (newVal !== 0) {
+      const { error } = await supabase.from('votes').insert({
         post_id: postId,
         user_id: user.id,
         value: newVal
       } as any)
-      if (error) console.error("Vote failed:", error)
+
+      if (error) {
+        console.error("Vote failed:", error)
+        // Revert optimistic update if needed, though simple log is usually enough for this demo level
+        alert("Vote failed to save. Please try again.")
+      }
     }
   }
 

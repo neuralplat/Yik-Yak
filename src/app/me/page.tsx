@@ -33,6 +33,25 @@ export default function MePage() {
                 if (newProfile) data = newProfile
             }
 
+            // Fetch stats
+            // Fetch stats
+            if (data) {
+                // Count only active posts
+                const now = new Date().toISOString()
+                const { count } = await supabase
+                    .from('posts')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('user_id', user.id)
+                    .or(`expires_at.is.null,expires_at.gt.${now}`)
+
+                // Karma includes all
+                const { data: postsData } = await supabase.from('posts').select('score').eq('user_id', user.id)
+
+                const calculatedKarma = postsData?.reduce((acc: any, curr: any) => acc + (curr.score || 0), 0) || 0
+
+                data = { ...data, stats: { posts: count || 0, karma: calculatedKarma } }
+            }
+
             setProfile(data)
             setLoading(false)
         }
@@ -60,11 +79,11 @@ export default function MePage() {
 
                 <div className="mt-6 flex gap-8">
                     <div>
-                        <div className="text-2xl font-bold">{profile?.karma || 0}</div>
+                        <div className="text-2xl font-bold">{profile?.stats?.karma || 0}</div>
                         <div className="text-xs opacity-75">Yak Karma</div>
                     </div>
                     <div>
-                        <div className="text-2xl font-bold">0</div>
+                        <div className="text-2xl font-bold">{profile?.stats?.posts || 0}</div>
                         <div className="text-xs opacity-75">My Posts</div>
                     </div>
                 </div>
@@ -87,15 +106,7 @@ export default function MePage() {
                     </button>
                 </div>
 
-                <h2 className="text-lg font-semibold text-black">Settings</h2>
-                <div className="space-y-2">
-                    <div className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
-                        <span>Notifications</span>
-                        <div className="w-10 h-6 bg-cyan-200 rounded-full relative cursor-pointer">
-                            <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
+                {/* Settings Removed */}
             </div>
         </div>
     )

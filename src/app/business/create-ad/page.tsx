@@ -59,7 +59,7 @@ export default function CreateAdPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-20">
             <header className="bg-white p-4 flex items-center gap-4 border-b">
-                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full text-gray-600">
+                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full text-black">
                     <ArrowLeft size={20} />
                 </button>
                 <h1 className="font-bold text-lg text-gray-800">Create New Ad</h1>

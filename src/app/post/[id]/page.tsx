@@ -205,7 +205,7 @@ export default function PostPage() {
     return (
         <div className="min-h-screen bg-gray-50 pb-32">
             <header className="bg-white p-4 flex items-center gap-4 sticky top-0 shadow-sm z-10 z-[100]">
-                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full text-gray-600">
+                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full text-black">
                     <ArrowLeft size={20} />
                 </button>
                 <span className="font-black text-lg text-gray-800">Yak</span>

@@ -33,6 +33,8 @@ export default function CommunityFeedPage() {
         const { data } = await supabase.from('posts')
             .select('*, votes(value), profiles(yakker_id)')
             .eq('community_id', communityId)
+            // Filter out expired ghosts
+            .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
             .order('created_at', { ascending: false })
             .limit(50)
 
@@ -57,7 +59,7 @@ export default function CommunityFeedPage() {
         <div className="min-h-screen bg-gray-50 pb-20">
             {/* Header with Hero-like background */}
             <div className="bg-cyan-600 text-white p-6 pt-12 rounded-b-3xl shadow-lg relative overflow-hidden">
-                <button onClick={() => router.back()} className="absolute top-4 left-4 p-2 bg-white/20 rounded-full backdrop-blur-md">
+                <button onClick={() => router.back()} className="absolute top-4 left-4 p-2 bg-white/20 rounded-full backdrop-blur-md text-black">
                     <ArrowLeft size={20} />
                 </button>
 

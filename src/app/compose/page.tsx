@@ -48,7 +48,7 @@ export default function ComposePage() {
         let expiresAt = null
         if (isGhost) {
             const date = new Date()
-            if (duration === '5m') date.setMinutes(date.getMinutes() + 5)
+            if (duration === '1h') date.setMinutes(date.getMinutes() + 60)
             if (duration === '12h') date.setHours(date.getHours() + 12)
             if (duration === '24h') date.setHours(date.getHours() + 24)
             if (duration === '48h') date.setHours(date.getHours() + 48)
@@ -90,7 +90,7 @@ export default function ComposePage() {
         setLoading(false)
     }
 
-    const durationOptions = ['5m', '12h', '24h', '48h', '1w']
+    const durationOptions = ['1h', '12h', '24h', '48h', '1w']
 
     return (
         <div className="max-w-2xl mx-auto min-h-screen bg-white flex flex-col md:border-x md:shadow-sm">

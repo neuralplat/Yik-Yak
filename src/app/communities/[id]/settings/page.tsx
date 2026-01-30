@@ -61,7 +61,7 @@ export default function CommunitySettingsPage() {
     return (
         <div className="min-h-screen bg-gray-50 p-6 pb-24">
             <header className="flex items-center gap-4 mb-8">
-                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full">
+                <button onClick={() => router.back()} className="p-2 hover:bg-gray-100 rounded-full text-black">
                     <ArrowLeft size={20} />
                 </button>
                 <h1 className="text-2xl font-bold text-gray-800">Herd Settings</h1>

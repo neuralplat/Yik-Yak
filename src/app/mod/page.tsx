@@ -46,7 +46,7 @@ export default function ModeratorPage() {
 
     return (
         <div className="max-w-2xl mx-auto p-6 min-h-screen bg-gray-50">
-            <h1 className="text-2xl font-bold mb-6">Moderator Queue</h1>
+            <h1 className="text-2xl font-bold mb-6 text-black">Moderator Queue</h1>
 
             <div className="space-y-4">
                 {reports.length === 0 && (
@@ -60,7 +60,7 @@ export default function ModeratorPage() {
                             <span className="text-xs text-gray-400">Report ID: #{report.id}</span>
                         </div>
 
-                        <p className="text-lg mb-6 p-4 bg-gray-50 rounded-lg italic">"{report.content}"</p>
+                        <p className="text-lg mb-6 p-4 bg-gray-50 rounded-lg italic text-black">"{report.content}"</p>
 
                         <div className="flex gap-4">
                             <button
