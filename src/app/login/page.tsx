@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import { generateYakkerId } from '@/lib/name-generator'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -33,17 +34,48 @@ export default function LoginPage() {
         setLoading(true)
         setError(null)
 
-        // In a real app, we'd generate the public Yakker ID here and insert into profiles
-        const { error } = await supabase.auth.signUp({
+        // 1. Sign Up Auth
+        const { data: authData, error: authError } = await supabase.auth.signUp({
             email,
             password,
+            options: {
+                // If you want to disable email confirmation requirement for dev, you need to toggle it in Supabase dashboard
+                // otherwise this will require checking email.
+                data: {
+                    yakker_id: generateYakkerId() // Store in metadata too as backup
+                }
+            }
         })
 
-        if (error) {
-            setError(error.message)
-        } else {
-            setError('Check your email for the confirmation link!')
+        if (authError) {
+            setError("Sign up failed: " + authError.message)
+            setLoading(false)
+            return
         }
+
+        if (authData.user) {
+            // 2. Create Public Profile
+            const yakkerId = generateYakkerId()
+            const { error: profileError } = await supabase
+                .from('profiles')
+                .insert({
+                    id: authData.user.id,
+                    yakker_id: yakkerId,
+                } as any)
+
+            if (profileError) {
+                console.error("Profile creation failed:", profileError)
+                // Don't block flow, might still work
+            }
+
+            // Check if we are already logged in (Email confirmation disabled)
+            if (authData.session) {
+                router.push('/') // Go straight to feed
+            } else {
+                alert("Account created! Check your email to confirm.")
+            }
+        }
+
         setLoading(false)
     }
 

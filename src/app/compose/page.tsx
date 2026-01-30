@@ -20,7 +20,17 @@ export default function ComposePage() {
     const router = useRouter()
 
     const handlePost = async () => {
-        if (!content.trim() || !user || !coords) return
+        if (!content.trim()) return
+
+        if (!user) {
+            alert("You must be logged in to Yak. (Database connection might be missing)")
+            return
+        }
+
+        if (!coords) {
+            alert("We need your location to post! Please enable permissions.")
+            return
+        }
 
         const moderation = moderateContent(content)
         if (!moderation.safe) {
@@ -60,26 +70,26 @@ export default function ComposePage() {
     const durationOptions = ['12h', '24h', '48h', '1w']
 
     return (
-        <div className="max-w-md mx-auto min-h-screen bg-white flex flex-col">
+        <div className="max-w-2xl mx-auto min-h-screen bg-white flex flex-col md:border-x md:shadow-sm">
             <header className="flex justify-between items-center p-4 border-b">
-                <button onClick={() => router.back()} className="text-gray-500">Cancel</button>
-                <h1 className="font-bold">New Yak</h1>
+                <button onClick={() => router.back()} className="text-gray-500 hover:bg-gray-100 p-2 rounded-full">Cancel</button>
+                <h1 className="font-bold text-lg">New Yak</h1>
                 <button
                     onClick={handlePost}
                     disabled={!content.trim() || loading}
-                    className="font-bold text-cyan-500 disabled:opacity-50"
+                    className="bg-cyan-500 text-white px-6 py-2 rounded-full font-bold shadow-sm hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                     {loading ? 'Posting...' : 'Yak It'}
                 </button>
             </header>
 
-            <div className="flex-1 p-4">
+            <div className="flex-1 p-6">
                 <textarea
                     value={content}
                     onChange={e => setContent(e.target.value)}
                     placeholder="What's happening in the herd?"
-                    className="w-full h-40 text-lg resize-none outline-none placeholder:text-gray-300"
-                    maxLength={500}
+                    className="w-full h-64 text-xl resize-none outline-none placeholder:text-gray-300"
+                    maxLength={2000}
                 />
 
                 <div className="mt-4 space-y-4">

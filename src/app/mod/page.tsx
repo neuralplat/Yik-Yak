@@ -1,18 +1,46 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Check, X } from 'lucide-react'
+import { supabase } from '@/lib/supabase/client'
 
 export default function ModeratorPage() {
-    // Mock reported posts
-    const [reports, setReports] = useState([
-        { id: 1, content: "This is a very mean post about squirrels.", reason: "Harassment", status: "pending" },
-        { id: 2, content: "Selling illegal walnuts.", reason: "Illegal Goods", status: "pending" }
-    ])
+    const [reports, setReports] = useState<any[]>([])
 
-    const handleAction = (id: number, action: 'approve' | 'ban') => {
-        setReports(reports.filter(r => r.id !== id))
-        // API call to update report status would go here
+    useEffect(() => {
+        loadReports()
+    }, [])
+
+    async function loadReports() {
+        const { data } = await supabase
+            .from('reports')
+            .select('*, posts(content)')
+            .eq('status', 'pending')
+
+        if (data) {
+            // Flatten structure for easy display
+            setReports(data.map(r => ({
+                id: r.id,
+                content: r.posts?.content || '[Deleted Post]',
+                reason: r.reason,
+                post_id: r.post_id
+            })))
+        }
+    }
+
+    const handleAction = async (reportId: string, action: 'approve' | 'ban', postId?: string) => {
+        // Optimistic UI update
+        setReports(reports.filter(r => r.id !== reportId))
+
+        if (action === 'ban' && postId) {
+            // Delete the post
+            await supabase.from('posts').delete().eq('id', postId)
+            // Update report status
+            await supabase.from('reports').update({ status: 'action_taken' } as any).eq('id', reportId)
+        } else {
+            // Dismiss report
+            await supabase.from('reports').update({ status: 'dismissed' } as any).eq('id', reportId)
+        }
     }
 
     return (
@@ -35,7 +63,7 @@ export default function ModeratorPage() {
 
                         <div className="flex gap-4">
                             <button
-                                onClick={() => handleAction(report.id, 'ban')}
+                                onClick={() => handleAction(report.id, 'ban', report.post_id)}
                                 className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-bold flex justify-center items-center gap-2"
                             >
                                 <X size={18} /> Remove Post

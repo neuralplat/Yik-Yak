@@ -22,7 +22,12 @@ export default function RootLayout({
       <body className={`${inter.className} bg-slate-50 text-slate-900`}>
         <AuthProvider>
           <LocationProvider>
-            {children}
+            <main className="min-h-screen pb-20 max-w-[1920px] mx-auto relative bg-gray-100">
+              {/* Desktop: Centered Content Container */}
+              <div className="max-w-4xl mx-auto min-h-screen bg-white shadow-xl border-x">
+                {children}
+              </div>
+            </main>
             <MobileNav />
           </LocationProvider>
         </AuthProvider>

@@ -10,14 +10,20 @@ export default function CommunitiesPage() {
     const [communities, setCommunities] = useState<any[]>([])
 
     useEffect(() => {
-        // In real app, fetch via PostGIS
-        // Mocking nearby communities
-        const mockCommunities = [
-            { id: '1', name: 'Campus Life', description: 'Everything happening on campus', members: 1240, dist: '0.2 mi' },
-            { id: '2', name: 'Downtown Eats', description: 'Best food in the city', members: 850, dist: '1.5 mi' },
-            { id: '3', name: 'Night Owls', description: 'Late night chats', members: 320, dist: '0.8 mi' }
-        ]
-        setCommunities(mockCommunities)
+        async function loadCommunities() {
+            // In a real app we would use PostGIS radius query
+            // const { data } = await supabase.rpc('get_nearby_communities', { lat, long, rad })
+            const { data } = await supabase.from('communities').select('*').limit(20)
+
+            if (data) {
+                setCommunities(data.map((c: any) => ({
+                    ...c,
+                    members: Math.floor(Math.random() * 500) + 10, // Mock members count for now as no join table yet
+                    dist: 'Nearby' // Mock distance
+                })))
+            }
+        }
+        loadCommunities()
     }, [coords])
 
     return (

@@ -1,17 +1,30 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { BarChart, Plus, DollarSign, Target } from 'lucide-react'
+import { supabase } from '@/lib/supabase/client'
 
 export default function BusinessDashboard() {
     const router = useRouter()
-    // Mock data for analytics
-    const stats = [
-        { label: 'Active Ads', value: '1', icon: Target },
-        { label: 'Total Views', value: '1,234', icon: BarChart },
-        { label: 'Budget Used', value: '$120', icon: DollarSign },
-    ]
+
+    const [stats, setStats] = useState([
+        { label: 'Active Ads', value: '-', icon: Target },
+        { label: 'Total Budget', value: '-', icon: DollarSign },
+    ])
+
+    useEffect(() => {
+        async function loadStats() {
+            const { data: ads } = await supabase.from('ads').select('*')
+            if (ads) {
+                setStats([
+                    { label: 'Active Ads', value: ads.length.toString(), icon: Target },
+                    { label: 'Total Budget', value: '$' + (ads.length * 499).toString(), icon: DollarSign },
+                ])
+            }
+        }
+        loadStats()
+    }, [])
 
     return (
         <div className="min-h-screen bg-gray-50 pb-20">

@@ -71,6 +71,22 @@ export default function MePage() {
             </div>
 
             <div className="space-y-4">
+                <h2 className="text-lg font-semibold">Menu</h2>
+                <div className="space-y-2">
+                    <button
+                        onClick={() => window.location.href = '/business'}
+                        className="w-full p-4 bg-white border shadow-sm rounded-lg flex justify-between items-center hover:bg-gray-50 transition-colors"
+                    >
+                        <span className="font-medium text-gray-700">Business Dashboard</span>
+                    </button>
+                    <button
+                        onClick={() => window.location.href = '/mod'}
+                        className="w-full p-4 bg-white border shadow-sm rounded-lg flex justify-between items-center hover:bg-gray-50 transition-colors"
+                    >
+                        <span className="font-medium text-gray-700">Moderation Queue</span>
+                    </button>
+                </div>
+
                 <h2 className="text-lg font-semibold">Settings</h2>
                 <div className="space-y-2">
                     <div className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
@@ -78,10 +94,6 @@ export default function MePage() {
                         <div className="w-10 h-6 bg-cyan-200 rounded-full relative cursor-pointer">
                             <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full"></div>
                         </div>
-                    </div>
-                    <div className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
-                        <span>Ghost Mode</span>
-                        <span className="text-xs text-gray-400">Premium Only</span>
                     </div>
                 </div>
             </div>
