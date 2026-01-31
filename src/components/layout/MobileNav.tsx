@@ -10,9 +10,10 @@ export function MobileNav() {
 
     const links = [
         { href: '/', label: 'Feed', icon: Home },
-        { href: '/compose', label: 'Post', icon: PlusSquare },
         { href: '/communities', label: 'Herds', icon: Map },
-        { href: '/me', label: 'My Yak', icon: User },
+        { href: '/compose', label: 'Post', icon: PlusSquare },
+        { href: '/business', label: 'Biz', icon: Briefcase },
+        { href: '/me', label: 'Me', icon: User },
     ]
 
     return (

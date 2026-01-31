@@ -17,13 +17,18 @@ export default function FeedPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
     if (coords) {
       fetchPosts()
       fetchRandomAd()
     } else if (!locLoading) {
       setLoading(false) // Location failed or denied
     }
-  }, [coords, locLoading])
+  }, [coords, locLoading, user])
 
   async function fetchRandomAd() {
     // Fetch random active ad
