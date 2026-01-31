@@ -34,13 +34,13 @@ export default function ModeratorPage() {
 
         if (action === 'ban' && item) {
             if (item.type === 'post') {
-                await supabase.from('posts').delete().eq('id', item.post_id)
+                await (supabase.from('posts') as any).delete().eq('id', item.post_id)
             } else {
-                await supabase.from('comments').delete().eq('id', item.comment_id)
+                await (supabase.from('comments') as any).delete().eq('id', item.comment_id)
             }
-            await supabase.from('reports').update({ status: 'action_taken' } as any).eq('id', reportId)
+            await (supabase.from('reports') as any).update({ status: 'action_taken' }).eq('id', reportId)
         } else {
-            await supabase.from('reports').update({ status: 'dismissed' } as any).eq('id', reportId)
+            await (supabase.from('reports') as any).update({ status: 'dismissed' }).eq('id', reportId)
         }
     }
 

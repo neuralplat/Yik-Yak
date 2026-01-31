@@ -41,11 +41,11 @@ export default function CommunitySettingsPage() {
     }
 
     const handleSave = async () => {
-        const { error } = await supabase.from('communities' as any).update({
+        const { error } = await (supabase.from('communities') as any).update({
             name,
             description,
             radius_meters: radius
-        } as any).eq('id', communityId)
+        }).eq('id', communityId)
 
         if (error) {
             alert("Failed to update: " + error.message)

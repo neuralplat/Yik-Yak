@@ -20,7 +20,7 @@ export default function CommunityMembersPage() {
         const { data } = await supabase
             .from('community_members')
             .select('*, profiles(yakker_id)')
-            .eq('community_id', id)
+            .eq('community_id', id as string)
             .order('joined_at', { ascending: false })
 
         if (data) setMembers(data)

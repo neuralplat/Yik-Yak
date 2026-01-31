@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
 import { useAuth } from '@/components/features/AuthProvider'
@@ -10,7 +10,7 @@ import { generateYakkerId } from '@/lib/name-generator'
 import { ArrowLeft, Clock, MapPin, Send, Ghost } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export default function ComposePage() {
+function ComposeContent() {
     const [content, setContent] = useState('')
     const [isGhost, setIsGhost] = useState(false)
     const [duration, setDuration] = useState('24h') // 12h, 24h, 48h, 1w
@@ -152,7 +152,7 @@ export default function ComposePage() {
                                     className={cn(
                                         "flex-1 py-2 text-sm font-medium rounded-lg border",
                                         duration === opt
-                                            ? "bg-purple-50 border-purple-200 text-purple-700"
+                                            ? "bg-purple-55 border-purple-200 text-purple-700"
                                             : "border-gray-200 text-gray-500 hover:bg-gray-50"
                                     )}
                                 >
@@ -168,5 +168,13 @@ export default function ComposePage() {
                 Yaks are anonymous but subject to our Community Guardrails.
             </div>
         </div>
+    )
+}
+
+export default function ComposePage() {
+    return (
+        <Suspense fallback={<div className="p-10 text-center">Loading composer...</div>}>
+            <ComposeContent />
+        </Suspense>
     )
 }

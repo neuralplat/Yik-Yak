@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useLocation } from '@/components/features/LocationProvider'
 import { useAuth } from '@/components/features/AuthProvider'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowBigUp, ArrowBigDown, MessageCircle, Clock, MapPin, Flag } from 'lucide-react'
+import { ArrowBigUp, ArrowBigDown, MessageCircle, Clock, MapPin, Flag, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 
 export default function FeedPage() {
@@ -136,6 +136,16 @@ export default function FeedPage() {
     else alert("Report sent to moderation team.")
   }
 
+  const handleDelete = async (postId: string) => {
+    if (!confirm("Delete this Yak forever?")) return
+    const { error } = await supabase.from('posts').delete().eq('id', postId)
+    if (error) {
+      alert(error.message)
+    } else {
+      setPosts(posts.filter(p => p.id !== postId))
+    }
+  }
+
   if (locLoading || loading) return (
     <div className="flex flex-col items-center justify-center min-h-screen pt-20">
       <div className="animate-bounce text-4xl mb-4">🛸</div>
@@ -237,12 +247,21 @@ export default function FeedPage() {
                       <MessageCircle size={14} />
                       Reply
                     </div>
-                    <button
-                      onClick={() => handleReport(post.id)}
-                      className="flex items-center gap-1 hover:text-red-500 transition-colors"
-                    >
-                      <Flag size={12} /> Report
-                    </button>
+                    {user && user.id === post.user_id ? (
+                      <button
+                        onClick={() => handleDelete(post.id)}
+                        className="flex items-center gap-1 hover:text-red-500 transition-colors text-gray-400"
+                      >
+                        <Trash2 size={12} /> Delete
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleReport(post.id)}
+                        className="flex items-center gap-1 hover:text-red-500 transition-colors"
+                      >
+                        <Flag size={12} /> Report
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

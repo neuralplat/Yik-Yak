@@ -31,8 +31,8 @@ export default function BusinessDashboard() {
             .order('created_at', { ascending: false })
 
         if (adsData) {
-            const activeAds = adsData.filter(ad => new Date(ad.expires_at) > new Date())
-            const totalSpent = adsData.reduce((acc, ad) => acc + (ad.cost || 0), 0)
+            const activeAds = (adsData as any[]).filter(ad => new Date(ad.expires_at) > new Date())
+            const totalSpent = (adsData as any[]).reduce((acc, ad) => acc + (ad.cost || 0), 0)
 
             setStats([
                 { label: 'Active Ads', value: activeAds.length.toString(), icon: Target },

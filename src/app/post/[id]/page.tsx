@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase/client'
-import { ArrowLeft, Send, ArrowBigUp, ArrowBigDown, Clock, MessageCircle, Flag, MapPin, MoreHorizontal, X, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Send, ArrowBigUp, ArrowBigDown, Clock, MessageCircle, Flag, MapPin, MoreHorizontal, X, AlertTriangle, Trash2 } from 'lucide-react'
 import { formatDistanceToNow } from 'date-fns'
 import { useAuth } from '@/components/features/AuthProvider'
 import { generateYakkerId } from '@/lib/name-generator'
@@ -137,6 +137,16 @@ export default function PostPage() {
         else alert("Failed to report.")
     }
 
+    const handleDeletePost = async () => {
+        if (!confirm("Delete this Yak forever?")) return
+        const { error } = await supabase.from('posts').delete().eq('id', postId)
+        if (error) alert(error.message)
+        else {
+            alert("Deleted.")
+            router.push('/')
+        }
+    }
+
     // --- RENDER HELPERS ---
 
     // Sort comments: Parents first, then children? Or just flat list with indentation?
@@ -216,7 +226,14 @@ export default function PostPage() {
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
                     <div className="flex justify-between items-start mb-3">
                         <span className="text-xs font-bold text-cyan-600">@{post.profiles?.yakker_id || 'Anon'}</span>
-                        {post.is_ghost && <span className="text-[10px] text-purple-500 font-bold uppercase flex items-center gap-1"><Clock size={10} /> Ghost</span>}
+                        <div className="flex items-center gap-2">
+                            {post.is_ghost && <span className="text-[10px] text-purple-500 font-bold uppercase flex items-center gap-1"><Clock size={10} /> Ghost</span>}
+                            {user && user.id === post.user_id && (
+                                <button onClick={handleDeletePost} className="text-gray-300 hover:text-red-500" title="Delete Post">
+                                    <Trash2 size={16} />
+                                </button>
+                            )}
+                        </div>
                     </div>
                     <div className="text-xl leading-relaxed text-gray-800 mb-4 font-medium">{post.content}</div>
                     <div className="flex items-center justify-between text-gray-400 text-sm border-t pt-4">

@@ -19,7 +19,7 @@ export default function MePage() {
                 .from('profiles')
                 .select('*')
                 .eq('id', user.id)
-                .single()
+                .single() as { data: any, error: any }
 
             if (!data && !error) {
                 // Create profile if missing (simple client-side logic for demo)
@@ -49,7 +49,11 @@ export default function MePage() {
 
                 const calculatedKarma = postsData?.reduce((acc: any, curr: any) => acc + (curr.score || 0), 0) || 0
 
-                data = { ...data, stats: { posts: count || 0, karma: calculatedKarma } }
+                if (data) {
+                    data = { ...data, stats: { posts: count || 0, karma: calculatedKarma } }
+                } else {
+                    data = { stats: { posts: count || 0, karma: calculatedKarma } }
+                }
             }
 
             setProfile(data)

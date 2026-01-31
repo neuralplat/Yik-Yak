@@ -37,7 +37,7 @@ export default function CreateCommunityPage() {
             creator_id: user.id,
             location: `POINT(${coords.longitude} ${coords.latitude})`,
             radius_meters: radius * 1000 // Convert km to meters
-        } as any).select().single()
+        } as any).select().single() as any
 
         if (error) {
             alert("Failed to create herd: " + error.message)
